@@ -17,6 +17,7 @@ export const auth = betterAuth({
       },
     },
   },
+  trustedOrigins: [process.env.VERCEL_URL!],
   //...other options
   emailAndPassword: {
     enabled: true,
