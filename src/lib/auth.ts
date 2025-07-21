@@ -17,7 +17,7 @@ export const auth = betterAuth({
       },
     },
   },
-  trustedOrigins: [process.env.VERCEL_URL!, "https://true-name.vercel.app"],
+  trustedOrigins: ["https://true-name.vercel.app"],
   //...other options
   emailAndPassword: {
     enabled: true,
