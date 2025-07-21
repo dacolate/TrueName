@@ -1,0 +1,473 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "TrueNumber API",
+    "version": "1.0.0",
+    "description": "API documentation for the TrueNumber game application"
+  },
+  "servers": [
+    {
+      "url": "/api",
+      "description": "Base API URL"
+    }
+  ],
+  "paths": {
+    "/auth/sign-up/email": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "email": { "type": "string" },
+                  "password": { "type": "string" },
+                  "phone": { "type": "string" }
+                },
+                "required": ["username", "email", "password", "phone"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "user": { "type": "object" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/sign-in/email": {
+      "post": {
+        "summary": "Login user",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": { "type": "string" },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "username": { "type": "string" },
+                        "role": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/sign-out": {
+      "post": {
+        "summary": "Logout user",
+        "tags": ["Authentication"],
+        "responses": {
+          "200": {
+            "success": true
+          }
+        }
+      }
+    },
+    "/user/me": {
+      "get": {
+        "summary": "Get current user info",
+        "tags": ["Users"],
+        "responses": {
+          "200": {
+            "description": "User information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "username": { "type": "string" },
+                    "email": { "type": "string" },
+                    "phone": { "type": "string" },
+                    "role": { "type": "string" },
+                    "balance": { "type": "number" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/admin/list-users": {
+      "get": {
+        "summary": "Get all users (Admin only)",
+        "tags": ["Users"],
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "username": { "type": "string" },
+                      "email": { "type": "string" },
+                      "phone": { "type": "string" },
+                      "role": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/user/{id}": {
+      "get": {
+        "summary": "Get user by ID (Admin only)",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User information"
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      },
+      "put": {
+        "summary": "Update user (Admin only)",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "email": { "type": "string" },
+                  "phone": { "type": "string" },
+                  "role": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully"
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/game/play": {
+      "post": {
+        "summary": "Play the TrueNumber game",
+        "tags": ["Game"],
+        "responses": {
+          "200": {
+            "description": "Game result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": { "type": "string", "enum": ["gagné", "perdu"] },
+                    "generatedNumber": { "type": "number" },
+                    "newBalance": { "type": "number" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "user/balance": {
+      "get": {
+        "summary": "Get user balance",
+        "tags": ["Balance"],
+        "responses": {
+          "200": {
+            "description": "Current balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "balance": { "type": "number" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "user/history": {
+      "get": {
+        "summary": "Get user game history",
+        "tags": ["History"],
+        "responses": {
+          "200": {
+            "description": "Game history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "gameId": { "type": "string" },
+                      "date": { "type": "string" },
+                      "generatedNumber": { "type": "number" },
+                      "result": { "type": "string" },
+                      "balanceChange": { "type": "number" },
+                      "newBalance": { "type": "number" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/history/all": {
+      "get": {
+        "summary": "Get all game history (Admin only)",
+        "tags": ["History"],
+        "responses": {
+          "200": {
+            "description": "All game history"
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/admin/create-user": {
+      "post": {
+        "summary": "Create a new user (Admin only)",
+        "tags": ["Admin"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "email": { "type": "string" },
+                  "password": { "type": "string" },
+                  "phone": { "type": "string" },
+                  "role": {
+                    "type": "string",
+                    "enum": ["client", "admin"],
+                    "default": "client"
+                  }
+                },
+                "required": ["username", "email", "password", "phone"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "user": { "$ref": "#/components/schemas/User" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/admin/remove-user": {
+      "post": {
+        "summary": "Remove a user (Admin only)",
+        "tags": ["Admin"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": { "type": "string" }
+                },
+                "required": ["userId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User removed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "deletedUser": { "$ref": "#/components/schemas/User" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/users/{id}": {
+      "put": {
+        "summary": "Update user information (Admin only)",
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "email": { "type": "string" },
+                  "phone": { "type": "string" },
+                  "role": {
+                    "type": "string",
+                    "enum": ["client", "admin"]
+                  },
+                  "balance": { "type": "number" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "updatedUser": { "$ref": "#/components/schemas/User" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKeyCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "apiKeyCookie",
+        "description": "API Key authentication via cookie"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "User authentication endpoints"
+    },
+    {
+      "name": "Users",
+      "description": "User management endpoints"
+    },
+    {
+      "name": "Game",
+      "description": "TrueNumber game endpoints"
+    },
+    {
+      "name": "Balance",
+      "description": "User balance endpoints"
+    },
+    {
+      "name": "History",
+      "description": "Game history endpoints"
+    }
+  ]
+}
